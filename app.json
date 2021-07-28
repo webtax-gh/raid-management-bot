@@ -4,7 +4,7 @@
   "repository": "https://github.com/heroku/node-js-getting-started",
   "env": {
     "BOT_TOKEN": {
-      "description": "The token of your bot.",
+      "description": "The token of your bot."
     },
     "BOT_STAFF_ID": {
       "description": "The id of the staff role in your server, be warned that all these users can use the bot. It doesn't matter if they have kick perms or not."
