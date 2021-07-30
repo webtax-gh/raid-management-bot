@@ -26,16 +26,16 @@ class Confirm(discord.ui.View):
         super().__init__()
         self.value = None
     
-    @discord.ui.button(label="Confirm", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Ban", style=discord.ButtonStyle.green)
     async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
-        await interaction.response.send_message('Banning', ephemeral=True)
+        await interaction.response.send_message('Banning...', ephemeral=True)
         self.value = True
         self.stop()
 
     # This one is similar to the confirmation button except sets the inner value to `False`
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.grey)
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
-        await interaction.response.send_message('Cancelling', ephemeral=True)
+        await interaction.response.send_message('Cancelled', ephemeral=True)
         self.value = False
         self.stop()
 
