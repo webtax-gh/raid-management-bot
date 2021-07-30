@@ -13,11 +13,32 @@ description = '''A raid managment bot'''
 intents = discord.Intents.default()
 intents.members = True
 
-bot = commands.Bot(command_prefix=prefix, description=description, intents=intents)
+allowed_mentions = discord.AllowedMentions.none() 
+
+bot = commands.Bot(command_prefix=prefix, description=description, intents=intents, allowed_mentions=allowed_mentions)
 
 bot.remove_command("help")
 
 whitelist = []
+
+class Confirm(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.value = None
+    
+    @discord.ui.button(label="Confirm", style=discord.ButtonStyle.green)
+    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
+        await interaction.response.send_message('Banning', ephemeral=True)
+        self.value = True
+        self.stop()
+
+    # This one is similar to the confirmation button except sets the inner value to `False`
+    @discord.ui.button(label='Cancel', style=discord.ButtonStyle.grey)
+    async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
+        await interaction.response.send_message('Cancelling', ephemeral=True)
+        self.value = False
+        self.stop()
+
 
 @bot.event
 async def on_ready():
@@ -60,12 +81,18 @@ async def mass_ban(ctx, starting_member: discord.Member, ending_member: discord.
             watchlist.append(member)
     await ctx.send("Watchlist compiled")
     watchlist_info_message = f"Watchlist info:\n The watchlist contains **{len(watchlist)}** users.\n"+"\n".join([f"`{x.name} ({x.id})`" for x in watchlist])+"\n"+f"**To ban all of these users, send `I want to ban the {len(watchlist)} members in the watchlist`. You have 30 seconds.**"
+    view = Confirm()
+    
     for chunk in [watchlist_info_message[i:i+1999 ] for i in range(0, len(watchlist_info_message), 1999 )]:
-        await ctx.send(chunk)
-    def check(msg):
-        return msg.author == ctx.author and msg.channel == ctx.channel
-    msg = await bot.wait_for("message", check=check, timeout=30)
-    if msg.content.lower() == f"I want to ban the {len(watchlist)} members in the watchlist".lower():
+        await ctx.send(chunk, view=view)
+    
+    await view.wait()
+
+    if view.value is None:
+        await ctx.send("Buttons timed out") 
+    elif view.value == False:
+        return # already handled in the view 
+    if view.value == True:
         await ctx.send(f"Ban wave started by {ctx.author} ({ctx.author.id})")
         for chunk in grouper(5, watchlist):
             await asyncio.gather(x.ban(reason=f"Mass ban by {ctx.author} ({ctx.author.id})") for x in chunk)
