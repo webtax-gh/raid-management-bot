@@ -107,6 +107,8 @@ async def mass_ban(ctx, starting_member: discord.Member, ending_member: discord.
 async def on_command_error(ctx, error):
     if isinstance(error,commands.MemberNotFound):
         await ctx.send("`I could not find one or more users that you provided`")
+    elif isinstance(error,commands.CommandNotFound):
+        return
     else:
         await ctx.send(str(error))
 
