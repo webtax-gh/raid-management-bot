@@ -5,7 +5,7 @@ import asyncio
 import os
 
 token = os.getenv("BOT_TOKEN")
-staff_role_id = os.getenv("BOT_STAFF_ID")
+staff_role_id = int(os.getenv("BOT_STAFF_ID"))
 prefix = os.getenv("BOT_PREFIX")
 
 description = '''A raid managment bot'''
