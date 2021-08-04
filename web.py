@@ -100,7 +100,7 @@ async def mass_ban(ctx, starting_member: discord.Member, ending_member: discord.
     if view.value == True:
         await ctx.send(f"Ban wave started by {ctx.author} ({ctx.author.id})")
         for chunk in grouper(5, watchlist):
-            await asyncio.gather([x.ban(reason=f"Mass ban by {ctx.author} ({ctx.author.id})") for x in chunk])
+            await asyncio.gather(*[x.ban(reason=f"Mass ban by {ctx.author} ({ctx.author.id})") for x in chunk])
         await ctx.send(f":white_check_mark: **Banned {len(watchlist)} users**")
 
 @bot.event
